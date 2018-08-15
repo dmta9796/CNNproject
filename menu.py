@@ -3,12 +3,15 @@ import os
 import torch
 import matplotlib.pyplot as plt
 import numpy as np
+import torchvision
 
 import encoder as encode
 import neuralnets as neuralnet
 import decoder as decode
 import training as train
 import testing as test
+
+
 
 def fileexists(afile):
 	if(os.path.exists(afile)):
@@ -40,10 +43,20 @@ if __name__ == "__main__":
 			model=train.traindata(device)
 		
 		elif(cmdlist[0]=="test"):
-			test.accuracy(model)
+			#test.accuracy(model)
 			#test.accuracybyclass(model)
 			#decode.decode()
-			decode.getfeaturemaps()
+			#decode.getforwardconvlayer()
+			dataiter = iter(encode.testloader)
+			images, labels = dataiter.next()
+			image=torchvision.transforms.ToPILImage()(images[3])
+			print(image)
+			layer=1
+			iterations=5
+			lr=0.4
+			octave_scale=1
+			num_octaves=1
+			decode.deep_dream_image(image, layer, iterations, lr, octave_scale, num_octaves)
 		
 		elif(cmdlist[0]=="save"):
 			torch.save(model.state_dict(), cmdlist[1])
